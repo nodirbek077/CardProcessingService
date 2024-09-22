@@ -1,53 +1,33 @@
 package uz.asgardia.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "first_name", length = 50, nullable = false, unique = true)
+    private Integer id;
+    @Column(name = "first_name", length = 50)
     private String firstName;
-
-    @Column(name = "last_name", length = 50, nullable = false)
+    @Column(name = "last_name", length = 50)
     private String lastName;
-
-    @Column(name = "username")
+    @Column(name = "username", length = 12)
     private String username;
-
     @Column(name = "password", length = 64, nullable = false)
     private String password;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
-    public User() {
-    }
-
-    public User(long id, String firstName, String lastName, Date createdAt, Date updatedAt) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -67,22 +47,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -97,5 +61,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 }

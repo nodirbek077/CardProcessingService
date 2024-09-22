@@ -4,48 +4,33 @@ import jakarta.persistence.*;
 import uz.asgardia.enums.CardStatus;
 import uz.asgardia.enums.CurrencyType;
 
+import java.util.UUID;
 
 @Entity
 @Table(name = "cards")
 public class Card {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "idempotency_key")
-    private String idempotencyKey;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private UUID id;
 
-    @OneToMany
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
-
     @Enumerated
     @Column(name = "status")
     private CardStatus status = CardStatus.ACTIVE;
-
     @Column(name = "initial_amount")
     private long initialAmount;
-
     @Enumerated
     @Column(name = "currency")
     private CurrencyType currency = CurrencyType.UZS;
 
-    public Card() {
+    public UUID getId() {
+        return id;
     }
 
-    public Card(String idempotencyKey, User user, CardStatus status, long initialAmount, CurrencyType currency) {
-        this.idempotencyKey = idempotencyKey;
-        this.user = user;
-        this.status = status;
-        this.initialAmount = initialAmount;
-        this.currency = currency;
-    }
-
-    public String getIdempotencyKey() {
-        return idempotencyKey;
-    }
-
-    public void setIdempotencyKey(String idempotencyKey) {
-        this.idempotencyKey = idempotencyKey;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public User getUser() {

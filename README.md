@@ -1,1 +1,1 @@
-# CardProcessingService
+# uz.asgardia.CardProcessingServiceApplication
