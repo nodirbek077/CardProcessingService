@@ -33,8 +33,6 @@ public class Card {
     @Column(name = "currency")
     private Currency currency = Currency.UZS;
 
-    private String eTag;
-
     public Card() {
     }
 
@@ -102,19 +100,5 @@ public class Card {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
-    }
-
-    public String geteTag() {
-        return eTag;
-    }
-
-    public void seteTag(String eTag) {
-        this.eTag = eTag;
-    }
-
-    @PrePersist
-    @PreUpdate
-    public void generateETag(){
-        this.eTag = UUID.randomUUID().toString();
     }
 }

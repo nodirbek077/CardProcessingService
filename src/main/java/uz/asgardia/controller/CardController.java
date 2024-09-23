@@ -3,15 +3,16 @@ package uz.asgardia.controller;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import uz.asgardia.model.Card;
 import uz.asgardia.dto.CardRequest;
 import uz.asgardia.dto.CardResponse;
 import uz.asgardia.service.CardService;
-
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/v1/cards")
@@ -30,9 +31,15 @@ public class CardController {
     @GetMapping("/{cardId}")
     public ResponseEntity<CardResponse> getCardByCardId(@PathVariable String cardId){
         Card currentCard = cardService.getCardById(cardId);
+
+        String eTagSource = currentCard.getCardId() + currentCard.getStatus() + currentCard.getBalance() + currentCard.getCurrency();
+
+        // Generate an MD5 hash as the ETag
+        String eTag = DigestUtils.md5DigestAsHex(eTagSource.getBytes(StandardCharsets.UTF_8));
+
         return ResponseEntity
                 .ok()
-                .eTag(UUID.randomUUID().toString())
+                .header(HttpHeaders.ETAG, eTag)
                 .body(getCardResponse(currentCard));
     }
 

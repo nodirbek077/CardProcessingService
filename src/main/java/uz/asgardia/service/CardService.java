@@ -2,6 +2,7 @@ package uz.asgardia.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
 import uz.asgardia.exception.CardIdNotFoundException;
 import uz.asgardia.model.Card;
@@ -11,6 +12,7 @@ import uz.asgardia.enums.Currency;
 import uz.asgardia.exception.CardLimitExceededException;
 import uz.asgardia.repository.CardRepository;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -58,11 +60,15 @@ public class CardService {
 
         //check is the cardId and active status exist or not in the database
         Card existingCard = cardRepository.findByCardIdAndStatus(cardId, CardStatus.ACTIVE);
+
         if (existingCard == null)
             throw new CardIdNotFoundException("If the card with the specified id is not found.");
 
-        if (!ifMatch.equals(existingCard.geteTag()))
-            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Etag mismatch");
+        String generatedETag = existingCard.getCardId() + existingCard.getStatus() + existingCard.getBalance() + existingCard.getCurrency();
+        String currentETag = DigestUtils.md5DigestAsHex(generatedETag.getBytes(StandardCharsets.UTF_8));
+
+        if (!ifMatch.equals("\"" + currentETag + "\""))
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "ETag mismatch");
 
         existingCard.setStatus(CardStatus.BLOCKED);
         cardRepository.save(existingCard);
