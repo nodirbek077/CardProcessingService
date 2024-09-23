@@ -1,5 +1,5 @@
 package uz.asgardia.enums;
 
-public enum CurrencyType {
+public enum Currency {
     UZS, USD
 }
