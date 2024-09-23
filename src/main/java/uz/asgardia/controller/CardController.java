@@ -49,6 +49,12 @@ public class CardController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{cardId}/unblock")
+    public ResponseEntity<Void> unblockCard(@PathVariable String cardId, @RequestHeader("If-Match") String ifMatch){
+        cardService.unblockCard(cardId, ifMatch);
+        return ResponseEntity.noContent().build();
+    }
+
     private CardResponse getCardResponse(Card card){
         return new CardResponse(
                 card.getCardId(),

@@ -73,4 +73,22 @@ public class CardService {
         existingCard.setStatus(CardStatus.BLOCKED);
         cardRepository.save(existingCard);
     }
+
+    public void unblockCard(String cardId, String ifMatch) {
+
+        //check is the cardId and active status exist or not in the database
+        Card existingCard = cardRepository.findByCardIdAndStatus(cardId, CardStatus.BLOCKED);
+
+        if (existingCard == null)
+            throw new CardIdNotFoundException("If the card with the specified id is not found.");
+
+        String generatedETag = existingCard.getCardId() + existingCard.getStatus() + existingCard.getBalance() + existingCard.getCurrency();
+        String currentETag = DigestUtils.md5DigestAsHex(generatedETag.getBytes(StandardCharsets.UTF_8));
+
+        if (!ifMatch.equals("\"" + currentETag + "\""))
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "ETag mismatch");
+
+        existingCard.setStatus(CardStatus.ACTIVE);
+        cardRepository.save(existingCard);
+    }
 }
