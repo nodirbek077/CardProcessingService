@@ -4,7 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.server.ResponseStatusException;
+import uz.asgardia.dto.WithdrawRequest;
 import uz.asgardia.exception.CardIdNotFoundException;
+import uz.asgardia.exception.NoEnoughMoneyException;
 import uz.asgardia.model.Card;
 import uz.asgardia.dto.CardRequest;
 import uz.asgardia.enums.CardStatus;
@@ -90,5 +92,38 @@ public class CardService {
 
         existingCard.setStatus(CardStatus.ACTIVE);
         cardRepository.save(existingCard);
+    }
+
+    public Card withdrawFund(WithdrawRequest request, String cardId){
+
+        Card existingCard = cardRepository.findByCardIdAndStatus(cardId, CardStatus.ACTIVE);
+
+        if (existingCard == null)
+            throw new CardIdNotFoundException("The card with the specified id is not found.");
+
+        if (existingCard.getBalance() == null)
+            throw new NoEnoughMoneyException("Not found enough fund for withdrawing");
+
+        //here calculating and checking the different types of currency
+/*
+        // check if user already has 3 non-closed cards (ACTIVE or BLOCKED)
+        List<CardStatus> nonClosedStatusList = Arrays.asList(CardStatus.ACTIVE, CardStatus.BLOCKED);
+        List<Card> nonClosedCards = cardRepository.findByUserIdAndStatusIn(request.getUserId(), nonClosedStatusList);
+
+        //check if user already has more than none closed cards
+        if (nonClosedCards.size() >= 3)
+            throw new CardLimitExceededException("User already owns the maximum number of cards");
+
+        //create and save the new card data to the database
+        Card card = new Card();
+        card.setUserId(request.getUserId());
+        card.setStatus(request.getStatus() != null ? request.getStatus() : CardStatus.ACTIVE);
+        card.setBalance(request.getInitialAmount() != null ? request.getInitialAmount() : 0L);
+        card.setCurrency(request.getCurrency() != null ? request.getCurrency() : Currency.UZS);
+        card.setCardId(UUID.randomUUID().toString());
+        card.setIdempotencyKey(idempotencyKey);
+
+        return cardRepository.save(card);*/
+        return null;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+import uz.asgardia.dto.WithdrawRequest;
 import uz.asgardia.model.Card;
 import uz.asgardia.dto.CardRequest;
 import uz.asgardia.dto.CardResponse;
@@ -53,6 +54,12 @@ public class CardController {
     public ResponseEntity<Void> unblockCard(@PathVariable String cardId, @RequestHeader("If-Match") String ifMatch){
         cardService.unblockCard(cardId, ifMatch);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{cardId}/debit")
+    public ResponseEntity<CardResponse> getWithdrawFunds(@RequestHeader("Idempotency-Key") String idempotencyKey, @RequestBody @Valid WithdrawRequest request){
+        Card card = cardService.withdrawFund(request, idempotencyKey);
+        return new ResponseEntity<>(getCardResponse(card), HttpStatus.CREATED);
     }
 
     private CardResponse getCardResponse(Card card){
