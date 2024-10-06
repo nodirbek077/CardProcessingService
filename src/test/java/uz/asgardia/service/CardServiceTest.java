@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import uz.asgardia.model.Card;
-import uz.asgardia.dto.CardRequest;
-import uz.asgardia.enums.CardStatus;
-import uz.asgardia.enums.Currency;
-import uz.asgardia.repository.CardRepository;
+import uz.asgardia.card.model.Card;
+import uz.asgardia.card.dto.CardRequest;
+import uz.asgardia.card.enums.CardStatus;
+import uz.asgardia.card.enums.Currency;
+import uz.asgardia.card.repository.CardRepository;
+import uz.asgardia.card.service.CardService;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
